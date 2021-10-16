@@ -27,10 +27,31 @@ class GreatPlaces with ChangeNotifier {
     );
     _items.add(newPlace);
     notifyListeners();
-    DBHelper.insert('places', {
+    DBHelper.insert('user_ places', {
       'id': newPlace.id,
       'title': newPlace.title,
       'image': newPlace.image.path
     });
+  }
+
+  Future<void> fetchAndSetPlaces() async {
+    double nullDouble = 0;
+
+    final dataList = await DBHelper.getData('user_places');
+    _items = dataList
+        .map(
+          (item) => Place(
+            id: item['id'],
+            title: item['title'],
+            image: File(item['image']),
+            location: PlaceLocation(
+              address: "",
+              latitude: nullDouble,
+              longitude: nullDouble,
+            ),
+          ),
+        )
+        .toList();
+    notifyListeners();
   }
 }
